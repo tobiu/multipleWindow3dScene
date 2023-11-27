@@ -21,7 +21,10 @@ class WebGlComponent extends Canvas {
      */
     async afterSetOffscreenRegistered(value, oldValue) {
         if (value) {
-            await Demo.canvas.Helper.setupScene(this.getCanvasId())
+            let canvasId = this.getCanvasId();
+
+            await Demo.canvas.Helper.setupScene(canvasId)
+            await Demo.canvas.Helper.updateNumberOfCubes(canvasId)
         }
     }
 }
