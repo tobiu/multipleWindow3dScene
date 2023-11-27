@@ -1,4 +1,5 @@
-import BaseViewport from '../../../node_modules/neo.mjs/src/container/Viewport.mjs';
+import BaseViewport   from '../../../node_modules/neo.mjs/src/container/Viewport.mjs';
+import WebGlComponent from './WebGlComponent.mjs';
 
 /**
  * @class Demo.view.Viewport
@@ -12,9 +13,9 @@ class Viewport extends BaseViewport {
          */
         className: 'Demo.view.Viewport',
         /**
-         * @member {Object[]} items
+         * @member {Object[]|Neo.component.Base[]} items=[WebGlComponent]
          */
-        items: [],
+        items: [WebGlComponent],
         /*
          * @member {Object} layout={ntype:'fit'}
          */
