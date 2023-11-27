@@ -34,7 +34,7 @@ class Helper extends Base {
     /**
      * @member {Object} cubes={}
      */
-    cubes = []
+    cubes = {}
     /**
      * @member {Object} worlds={}
      */
@@ -74,11 +74,11 @@ class Helper extends Base {
             world = me.worlds[canvasId];
 
         // remove all cubes
-        me.cubes.forEach(cube => {
+        me.cubes[canvasId]?.forEach(cube => {
             world.remove(cube)
         })
 
-        me.cubes = [];
+        me.cubes[canvasId] = [];
 
         // add new cubes based on the current window setup
         for (; i < wins.length; i++) {
@@ -100,7 +100,7 @@ class Helper extends Base {
             cube.position.y = 200 + i*100;
 
             world.add(cube);
-            me.cubes.push(cube);
+            me.cubes[canvasId].push(cube);
         }
     }
 }
