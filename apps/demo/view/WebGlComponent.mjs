@@ -21,7 +21,10 @@ class WebGlComponent extends Canvas {
      */
     async afterSetOffscreenRegistered(value, oldValue) {
         if (value) {
-            let canvasId = this.getCanvasId();
+            let canvasId = this.getCanvasId(),
+                winData  = await Neo.Main.getWindowData();
+
+            console.log(winData);
 
             await Demo.canvas.Helper.setupScene(canvasId)
             await Demo.canvas.Helper.updateNumberOfCubes(canvasId)

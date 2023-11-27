@@ -71,16 +71,16 @@ class Helper extends Base {
      * @param {String} canvasId
      * @returns {Promise<void>}
      */
-    render(canvasId) {
+    async render(canvasId) {
         let me                = this,
             camera            = me.cameras[canvasId],
             cubes             = me.cubes[canvasId],
             renderer          = me.renderers[canvasId],
             scene             = me.scenes[canvasId],
-            sceneOffset       = {x: 0, y:0},
-            sceneOffsetTarget = {x: 0, y:0},
+            sceneOffset       = {x: 0, y: 0},
+            sceneOffsetTarget = {x: 1000, y: 1000},
             time              = me.getTime(),
-            wins              = [{shape: {x: 900, y: 600, w: 300, h: 300}}, {shape: {x: 500, y: 300, w: 200, h:200}}],
+            wins              = [{shape: {x: 344, y: 25, w: 1063, h: 1271}}],
             world             = me.worlds[canvasId];
 
         //windowManager.update();
@@ -146,7 +146,7 @@ class Helper extends Base {
         let me    = this,
             i     = 0,
             //wins  = windowManager.getWindows(),
-            wins  = [{shape: {x: 900, y: 600, w: 300, h: 300}}, {shape: {x: 500, y: 300, w: 200, h:200}}],
+            wins  = [{shape: {x: 344, y: 25, w: 1063, h: 1271}}],
             world = me.worlds[canvasId];
 
         // remove all cubes
