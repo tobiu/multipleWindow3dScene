@@ -20,7 +20,6 @@
         }
     },
     "apps": [
-        "Demo",
-        "Docs"
+        "Demo"
     ]
 }
