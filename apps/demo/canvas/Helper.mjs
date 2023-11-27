@@ -1,6 +1,13 @@
 import Base       from '../../../node_modules/neo.mjs/src/core/Base.mjs';
 import * as Three from '../../../node_modules/three/src/Three.js';
 
+let today = new Date();
+today.setHours(0);
+today.setMinutes(0);
+today.setSeconds(0);
+today.setMilliseconds(0);
+today = today.getTime();
+
 /**
  * @class Demo.canvas.Helper
  * @extends Neo.core.Base
@@ -20,6 +27,7 @@ class Helper extends Base {
          */
         remote: {
             app: [
+                'render',
                 'setupScene',
                 'updateNumberOfCubes'
             ]
@@ -32,34 +40,102 @@ class Helper extends Base {
     }
 
     /**
+     * @member {Object} cameras={}
+     */
+    cameras = {}
+    /**
      * @member {Object} cubes={}
      */
     cubes = {}
+    /**
+     * @member {Object} renderers={}
+     */
+    renderers = {}
+    /**
+     * @member {Object} scenes={}
+     */
+    scenes = {}
     /**
      * @member {Object} worlds={}
      */
     worlds = {}
 
     /**
+     * @returns {Number}
+     */
+    getTime() {
+        return (new Date().getTime() - today) / 1000.0;
+    }
+
+    /**
+     * @param {String} canvasId
+     * @returns {Promise<void>}
+     */
+    render(canvasId) {
+        let me                = this,
+            camera            = me.cameras[canvasId],
+            cubes             = me.cubes[canvasId],
+            renderer          = me.renderers[canvasId],
+            scene             = me.scenes[canvasId],
+            sceneOffset       = {x: 0, y:0},
+            sceneOffsetTarget = {x: 0, y:0},
+            time              = me.getTime(),
+            wins              = [{shape: {x: 900, y: 600, w: 300, h: 300}}, {shape: {x: 500, y: 300, w: 200, h:200}}],
+            world             = me.worlds[canvasId];
+
+        //windowManager.update();
+
+        // calculate the new position based on the delta between current offset and new offset times a falloff value
+        // (to create the nice smoothing effect)
+        let falloff = .05;
+        sceneOffset.x = sceneOffset.x + ((sceneOffsetTarget.x - sceneOffset.x) * falloff);
+        sceneOffset.y = sceneOffset.y + ((sceneOffsetTarget.y - sceneOffset.y) * falloff);
+
+        // set the world position to the offset
+        world.position.x = sceneOffset.x;
+        world.position.y = sceneOffset.y;
+
+        //let wins = windowManager.getWindows();
+
+
+        // loop through all our cubes and update their positions based on current window positions
+        for (let i = 0; i < cubes.length; i++) {
+            let cube = cubes[i];
+            let win = wins[i];
+
+            let posTarget = {x: win.shape.x + (win.shape.w * .5), y: win.shape.y + (win.shape.h * .5)}
+
+            cube.position.x = cube.position.x + (posTarget.x - cube.position.x) * falloff;
+            cube.position.y = cube.position.y + (posTarget.y - cube.position.y) * falloff;
+            cube.rotation.x = time * .5;
+            cube.rotation.y = time * .3;
+        }
+
+        renderer.render(scene, camera);
+
+        setTimeout(me.render.bind(me, canvasId), 300) // requestAnimationFrame is not supported in shared workers
+    }
+
+    /**
      * @param {String} canvasId
      * @returns {Promise<void>}
      */
     async setupScene(canvasId) {
-        let camera = new Three.OrthographicCamera(0, 0, 900, 600, -10000, 10000),
-            canvas = Neo.currentWorker.map[canvasId],
-            renderer, scene;
+        let me       = this,
+            camera   = me.cameras[canvasId] = new Three.OrthographicCamera(0, 0, 900, 600, -10000, 10000),
+            canvas   = Neo.currentWorker.map[canvasId],
+            renderer = me.renderers[canvasId] = new Three.WebGLRenderer({antialias: true, canvas, depthBuffer: true}),
+            scene    = me.scenes[canvasId] = new Three.Scene();
 
         camera.position.z = 2.5;
 
-        scene = new Three.Scene();
         scene.background = new Three.Color(0.0);
         scene.add(camera);
 
-        renderer = new Three.WebGLRenderer({antialias: true, canvas, depthBuffer: true});
         renderer.setPixelRatio(1);
 
-        this.worlds[canvasId] = new Three.Object3D();
-        scene.add(this.worlds[canvasId])
+        me.worlds[canvasId] = new Three.Object3D();
+        scene.add(me.worlds[canvasId]);
     }
 
     /**
@@ -95,9 +171,6 @@ class Helper extends Base {
 
             cube.position.x = win.shape.x + (win.shape.w * .5);
             cube.position.y = win.shape.y + (win.shape.h * .5);
-
-            cube.position.x = 200 + i*100;
-            cube.position.y = 200 + i*100;
 
             world.add(cube);
             me.cubes[canvasId].push(cube);

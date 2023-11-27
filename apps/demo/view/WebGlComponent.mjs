@@ -25,6 +25,7 @@ class WebGlComponent extends Canvas {
 
             await Demo.canvas.Helper.setupScene(canvasId)
             await Demo.canvas.Helper.updateNumberOfCubes(canvasId)
+            await Demo.canvas.Helper.render(canvasId)
         }
     }
 }
