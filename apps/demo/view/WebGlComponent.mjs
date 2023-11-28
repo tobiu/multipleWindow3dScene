@@ -10,7 +10,8 @@ class WebGlComponent extends Canvas {
          * @member {String} className='Demo.view.WebGlComponent'
          * @protected
          */
-        className: 'Demo.view.WebGlComponent'
+        className: 'Demo.view.WebGlComponent',
+        style: {overflow: 'auto'}
     }
 
     /**

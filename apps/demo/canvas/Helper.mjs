@@ -39,26 +39,11 @@ class Helper extends Base {
         singleton: true
     }
 
-    /**
-     * @member {Object} cameras={}
-     */
-    cameras = {}
-    /**
-     * @member {Object} cubes={}
-     */
-    cubes = {}
-    /**
-     * @member {Object} renderers={}
-     */
+    cameras   = {}
+    cubes     = {}
     renderers = {}
-    /**
-     * @member {Object} scenes={}
-     */
-    scenes = {}
-    /**
-     * @member {Object} worlds={}
-     */
-    worlds = {}
+    scenes    = {}
+    worlds    = {}
 
     /**
      * @returns {Number}
@@ -80,10 +65,8 @@ class Helper extends Base {
             sceneOffset       = {x: 0, y: 0},
             sceneOffsetTarget = {x: 1000, y: 1000},
             time              = me.getTime(),
-            wins              = [{shape: {x: 344, y: 25, w: 1063, h: 1271}}],
+            wins              = [{shape: {x: 344, y: 25, w: 710, h: 1271}}],
             world             = me.worlds[canvasId];
-
-        //windowManager.update();
 
         // calculate the new position based on the delta between current offset and new offset times a falloff value
         // (to create the nice smoothing effect)
@@ -109,11 +92,13 @@ class Helper extends Base {
             cube.position.y = cube.position.y + (posTarget.y - cube.position.y) * falloff;
             cube.rotation.x = time * .5;
             cube.rotation.y = time * .3;
+
+            //console.log(wins[0], 'cube', cube.position.x, cube.position.y, 'world', world.position.x, world.position.y);
         }
 
         renderer.render(scene, camera);
 
-        setTimeout(me.render.bind(me, canvasId), 300) // requestAnimationFrame is not supported in shared workers
+        setTimeout(me.render.bind(me, canvasId), 10) // requestAnimationFrame is not supported in shared workers
     }
 
     /**
@@ -122,20 +107,24 @@ class Helper extends Base {
      */
     async setupScene(canvasId) {
         let me       = this,
-            camera   = me.cameras[canvasId] = new Three.OrthographicCamera(0, 0, 900, 600, -10000, 10000),
+            camera   = me.cameras[canvasId] = new Three.OrthographicCamera(0, 884, 0, 1271, -10000, 10000),
             canvas   = Neo.currentWorker.map[canvasId],
             renderer = me.renderers[canvasId] = new Three.WebGLRenderer({antialias: true, canvas, depthBuffer: true}),
             scene    = me.scenes[canvasId] = new Three.Scene();
 
+        canvas.style = {}; // ThreeJS breaks otherwise
         camera.position.z = 2.5;
 
         scene.background = new Three.Color(0.0);
         scene.add(camera);
 
-        renderer.setPixelRatio(1);
+        renderer.setPixelRatio(2);
 
         me.worlds[canvasId] = new Three.Object3D();
         scene.add(me.worlds[canvasId]);
+
+        renderer.setSize(1271, 884);
+        camera.updateProjectionMatrix();
     }
 
     /**
