@@ -40,11 +40,12 @@ class Helper extends Base {
         singleton: true
     }
 
-    cameras   = {}
-    cubes     = {}
-    renderers = {}
-    scenes    = {}
-    worlds    = {}
+    cameras    = {}
+    components = {}
+    cubes      = {}
+    renderers  = {}
+    scenes     = {}
+    worlds     = {}
 
     /**
      * @returns {Number}
@@ -60,6 +61,7 @@ class Helper extends Base {
     async render(canvasId) {
         let me                = this,
             camera            = me.cameras[canvasId],
+            component         = me.components[canvasId],
             cubes             = me.cubes[canvasId],
             renderer          = me.renderers[canvasId],
             scene             = me.scenes[canvasId],
@@ -69,37 +71,36 @@ class Helper extends Base {
             wins              = [{shape: {x: 344, y: 25, w: 710, h: 1271}}],
             world             = me.worlds[canvasId];
 
-        // calculate the new position based on the delta between current offset and new offset times a falloff value
-        // (to create the nice smoothing effect)
-        let falloff = .05;
-        sceneOffset.x = sceneOffset.x + ((sceneOffsetTarget.x - sceneOffset.x) * falloff);
-        sceneOffset.y = sceneOffset.y + ((sceneOffsetTarget.y - sceneOffset.y) * falloff);
+        if (component) {
+            // calculate the new position based on the delta between current offset and new offset times a falloff value
+            // (to create the nice smoothing effect)
+            let falloff = .05;
+            sceneOffset.x = sceneOffset.x + ((sceneOffsetTarget.x - sceneOffset.x) * falloff);
+            sceneOffset.y = sceneOffset.y + ((sceneOffsetTarget.y - sceneOffset.y) * falloff);
 
-        // set the world position to the offset
-        world.position.x = sceneOffset.x;
-        world.position.y = sceneOffset.y;
+            // set the world position to the offset
+            world.position.x = sceneOffset.x;
+            world.position.y = sceneOffset.y;
 
-        //let wins = windowManager.getWindows();
+            // loop through all our cubes and update their positions based on current window positions
+            for (let i = 0; i < cubes.length; i++) {
+                let cube = cubes[i];
+                let win = wins[i];
 
+                let posTarget = {x: win.shape.x + (component.width * .5), y: win.shape.y + (component.height * .5)}
 
-        // loop through all our cubes and update their positions based on current window positions
-        for (let i = 0; i < cubes.length; i++) {
-            let cube = cubes[i];
-            let win = wins[i];
+                cube.position.x = cube.position.x + (posTarget.x - cube.position.x) * falloff;
+                cube.position.y = cube.position.y + (posTarget.y - cube.position.y) * falloff;
+                cube.rotation.x = time * .5;
+                cube.rotation.y = time * .3;
 
-            let posTarget = {x: win.shape.x + (win.shape.w * .5), y: win.shape.y + (win.shape.h * .5)}
+                // console.log(wins[0], 'cube', cube.position.x, cube.position.y, 'world', world.position.x, world.position.y);
+            }
 
-            cube.position.x = cube.position.x + (posTarget.x - cube.position.x) * falloff;
-            cube.position.y = cube.position.y + (posTarget.y - cube.position.y) * falloff;
-            cube.rotation.x = time * .5;
-            cube.rotation.y = time * .3;
-
-            //console.log(wins[0], 'cube', cube.position.x, cube.position.y, 'world', world.position.x, world.position.y);
+            renderer.render(scene, camera);
         }
 
-        renderer.render(scene, camera);
-
-        setTimeout(me.render.bind(me, canvasId), 10) // requestAnimationFrame is not supported inside of shared workers
+        setTimeout(me.render.bind(me, canvasId), 10) // requestAnimationFrame is not supported inside shared workers
     }
 
     /**
@@ -132,7 +133,17 @@ console.log(canvas)
      * @param {Object} data
      */
     updateDimensions(data) {
+        let me = this,
+            id = data.id;
 
+        delete data.id;
+
+        if (!me.components[id]) {
+            me.components[id] = data
+        } else {
+            Object.assign(me.components[id], data)
+        }
+        console.log(data)
     }
 
     /**
