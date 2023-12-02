@@ -28,20 +28,9 @@ class Viewport extends BaseViewport {
     construct(config) {
         super.construct(config);
 
-        let me = this;
-
-        me.on('windowPositionChange', me.onWindowPositionChange, me);
-
         Neo.main.addon.WindowPosition.registerWindow({
-            appName: me.appName
+            appName: this.appName
         })
-    }
-
-    /**
-     * @param {Object} data
-     */
-    onWindowPositionChange(data) {
-        console.log('onWindowPositionChange', data)
     }
 }
 

@@ -11,21 +11,29 @@ class WebGlComponent extends Canvas {
          * @protected
          */
         className: 'Demo.view.WebGlComponent',
+        /**
+         * @member {Object} style={overflow:'auto'}
+         */
         style: {overflow: 'auto'}
     }
 
     /**
-     * @param {Object} config
+     *
      */
-    construct(config) {
-        super.construct(config);
+    async onConstructed() {
+        super.onConstructed();
 
         let me = this;
 
         me.addDomListeners({
             resize: me.onResize,
             scope : me
-        })
+        });
+
+        // ensure the viewport instance got created
+        await me.timeout(1);
+
+        me.app.mainView.on('windowPositionChange', me.onWindowPositionChange, me)
     }
 
     /**
@@ -36,19 +44,32 @@ class WebGlComponent extends Canvas {
      */
     async afterSetOffscreenRegistered(value, oldValue) {
         if (value) {
-            let canvasId = this.getCanvasId(),
-                winData  = await Neo.Main.getWindowData();
+            let me                      = this,
+                canvasId                = me.getCanvasId(),
+                {height, width}         = await me.getDomRect(),
+                {screenLeft, screenTop} = await Neo.Main.getWindowData();
 
-            console.log(winData);
-
-            await Demo.canvas.Helper.setupScene(canvasId)
-            await Demo.canvas.Helper.updateNumberOfCubes(canvasId)
+            await Demo.canvas.Helper.updateDimensions({id: canvasId, height, width, screenLeft, screenTop});
+            await Demo.canvas.Helper.setupScene(canvasId);
+            await Demo.canvas.Helper.updateNumberOfCubes(canvasId);
             await Demo.canvas.Helper.render(canvasId)
         }
     }
 
     /**
      * @param {Object} data
+     * @returns {Promise<void>}
+     */
+    onWindowPositionChange(data) {
+        let id                      = this.getCanvasId(),
+            {screenLeft, screenTop} = data;
+
+        Demo.canvas.Helper.updateDimensions({id, screenLeft, screenTop})
+    }
+
+    /**
+     * @param {Object} data
+     * @returns {Promise<void>}
      */
     onResize(data) {
         let id              = this.getCanvasId(),
