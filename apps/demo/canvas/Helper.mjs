@@ -29,6 +29,7 @@ class Helper extends Base {
             app: [
                 'render',
                 'setupScene',
+                'updateDimensions',
                 'updateNumberOfCubes'
             ]
         },
@@ -98,7 +99,7 @@ class Helper extends Base {
 
         renderer.render(scene, camera);
 
-        setTimeout(me.render.bind(me, canvasId), 10) // requestAnimationFrame is not supported in shared workers
+        setTimeout(me.render.bind(me, canvasId), 10) // requestAnimationFrame is not supported inside of shared workers
     }
 
     /**
@@ -122,9 +123,16 @@ class Helper extends Base {
 
         me.worlds[canvasId] = new Three.Object3D();
         scene.add(me.worlds[canvasId]);
-
+console.log(canvas)
         renderer.setSize(1271, 884);
         camera.updateProjectionMatrix();
+    }
+
+    /**
+     * @param {Object} data
+     */
+    updateDimensions(data) {
+
     }
 
     /**

@@ -51,7 +51,10 @@ class WebGlComponent extends Canvas {
      * @param {Object} data
      */
     onResize(data) {
-        console.log('onResize', this.id, data)
+        let id              = this.getCanvasId(),
+            {height, width} = data.contentRect;
+
+        Demo.canvas.Helper.updateDimensions({id, height, width})
     }
 }
 

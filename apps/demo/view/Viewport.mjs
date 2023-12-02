@@ -21,6 +21,28 @@ class Viewport extends BaseViewport {
          */
         layout: {ntype: 'fit'}
     }
+
+    /**
+     * @param {Object} config
+     */
+    construct(config) {
+        super.construct(config);
+
+        let me = this;
+
+        me.on('windowPositionChange', me.onWindowPositionChange, me);
+
+        Neo.main.addon.WindowPosition.registerWindow({
+            appName: me.appName
+        })
+    }
+
+    /**
+     * @param {Object} data
+     */
+    onWindowPositionChange(data) {
+        console.log('onWindowPositionChange', data)
+    }
 }
 
 Neo.applyClassConfig(Viewport);

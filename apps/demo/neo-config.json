@@ -3,7 +3,7 @@
     "basePath"        : "../../",
     "environment"     : "development",
     "mainPath"        : "../node_modules/neo.mjs/src/Main.mjs",
-    "mainThreadAddons": ["DragDrop", "ResizeObserver", "Stylesheet"],
+    "mainThreadAddons": ["DragDrop", "ResizeObserver", "Stylesheet", "WindowPosition"],
     "themes"          : ["neo-theme-dark"],
     "useCanvasWorker" : true,
     "useSharedWorkers": true,
