@@ -15,6 +15,20 @@ class WebGlComponent extends Canvas {
     }
 
     /**
+     * @param {Object} config
+     */
+    construct(config) {
+        super.construct(config);
+
+        let me = this;
+
+        me.addDomListeners({
+            resize: me.onResize,
+            scope : me
+        })
+    }
+
+    /**
      * Triggered after the offscreenRegistered config got changed
      * @param {Boolean} value
      * @param {Boolean} oldValue
@@ -31,6 +45,13 @@ class WebGlComponent extends Canvas {
             await Demo.canvas.Helper.updateNumberOfCubes(canvasId)
             await Demo.canvas.Helper.render(canvasId)
         }
+    }
+
+    /**
+     * @param {Object} data
+     */
+    onResize(data) {
+        console.log('onResize', this.id, data)
     }
 }
 
