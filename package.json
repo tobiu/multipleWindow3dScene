@@ -5,8 +5,8 @@
     "type": "module",
     "scripts": {
         "add-config": "node ./node_modules/neo.mjs/buildScripts/addConfig.mjs",
-        "build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.mjs -n",
-        "build-all-questions": "node ./node_modules/neo.mjs/buildScripts/buildAll.mjs",
+        "build-all": "node ./node_modules/neo.mjs/buildScripts/buildAll.mjs -n -p=no",
+        "build-all-questions": "node ./node_modules/neo.mjs/buildScripts/buildAll.mjs -p=no",
         "build-themes": "node ./node_modules/neo.mjs/buildScripts/buildThemes.mjs",
         "build-threads": "node ./node_modules/neo.mjs/buildScripts/webpack/buildThreads.mjs",
         "create-app": "node ./node_modules/neo.mjs/buildScripts/createApp.mjs",
@@ -19,7 +19,7 @@
         "watch-themes": "node ./node_modules/neo.mjs/buildScripts/watchThemes.mjs"
     },
     "dependencies": {
-        "neo.mjs": "^6.10.4",
+        "neo.mjs": "^6.10.8",
         "three": "^0.158.0"
     },
     "devDependencies": {
